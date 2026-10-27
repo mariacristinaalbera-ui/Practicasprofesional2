@@ -1,1 +1,27 @@
+import pandas as pd
 
+# 1. Leer el archivo de Excel (puedes especificar la hoja con 'sheet_name')
+df = pd.read_excel('/content/data_set.xlsx', sheet_name='hoja1')
+
+# 2. Inspeccionar nulos y duplicados
+print("Nulos por columna:")
+print(df.isnull().sum())
+print(f"Filas duplicadas: {df.duplicated().sum()}")
+
+# 3. Eliminar duplicados
+df.drop_duplicates(inplace=True)
+
+# 4. Limpiar columnas de texto (quitar espacios en blanco invisibles)
+for col in df.select_dtypes(include=['object']).columns:
+    df[col] = df[col].astype(str).str.strip()
+
+# 5. Rellenar celdas vacías en columnas numéricas con la media (o con 0)
+columnas_num = df.select_dtypes(include=['number']).columns
+for col in columnas_num:
+    df[col].fillna(df[col].mean(), inplace=True)
+
+# 6. Exportar los datos limpios a un nuevo archivo de Excel
+df.to_excel('datos_limpios.xlsx', index=False)
+print("¡Archivo limpio exportado con éxito!")
+
+     
